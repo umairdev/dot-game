@@ -1,13 +1,20 @@
 const gulp = require('gulp');
 
 const sass = require('gulp-sass');
-var cssnano = require('gulp-cssnano');
-var sourcemaps = require('gulp-sourcemaps');
-var autoprefixer = require('gulp-autoprefixer');
+const cssnano = require('gulp-cssnano');
+const sourcemaps = require('gulp-sourcemaps');
+const autoprefixer = require('gulp-autoprefixer');
 const jshint = require('gulp-jshint');
 const concat = require('gulp-concat');
 const uglify = require('gulp-uglify');
 const rename = require('gulp-rename');
+const handlebars = require('handlebars');
+const config = require('./gulp.config')();
+const gulpHandlebars = require('gulp-handlebars-html')(handlebars);
+const regexRename = require('gulp-regex-rename');
+const replace = require('gulp-replace');
+const browserSync = require('browser-sync').create();
+
 
 // Sass and Styling Task
 gulp.task('sass', () => {
@@ -40,11 +47,35 @@ gulp.task('scripts', () => {
         .pipe(gulp.dest('dist/js'));
 	});
 
+// Templating task
+gulp.task('compileHtml', () => {
+    var templateData = {
+
+    },
+    options = {
+        partialsDirectory: [config.templatePartialPath]
+    };
+
+    return gulp.src(config.templatePath + "*.page.hbs")
+               .pipe(gulpHandlebars(templateData, options))
+               .pipe(regexRename(/\.page\.hbs$/, ".html"))
+               .pipe(replace(/\uFEFF/ig, "")) //cut out zero width nbsp characters the compiler adds in
+               .pipe(gulp.dest(config.templateOutputPath));
+});
+
+// Watch tasks
 gulp.task('watch', () => {
+	
+	browserSync.init({
+        server: "./dist"
+    });
+
 	gulp.watch('./src/js/**/*.js', gulp.series('lint'));
 	gulp.watch('./src/js/**/*.js', gulp.series('scripts'));
 	gulp.watch('./src/sass/**/*.scss', gulp.series('sass'));
+	gulp.watch(config.templates, gulp.series('compileHtml'));
+	gulp.watch("dist/*.html").on('change', browserSync.reload);
 });
 
 // Run Project Task
-gulp.task('magic', gulp.series('sass', 'lint', 'scripts'));
+gulp.task('magic', gulp.series('lint', 'scripts', 'sass', 'compileHtml'));
