@@ -1,0 +1,51 @@
+/* Main SCSS File */
+
+// Base
+@import "variables";
+
+// Structure
+@import "layout";
+
+// Components
+@import "scaffolding";
+
+.container {
+	height: 100%;
+
+	header {
+		height: 100px;
+		background-color: $silver;
+		padding: 5px 15px 5px 15px;
+	}
+
+	game-container {
+		display: block;
+		text-align: center;
+		width: 100%;
+		height: calc(100vh - 150px);
+		position: relative;
+
+		canvas {
+			display: inline-block;
+			margin: 5px;
+		}
+	}
+
+	.slidecontainer {
+	 	width: 100%;
+
+	 	.slider {
+			appearance: none;
+			width: 100%; /* Full-width */
+			height: 25px; /* Specified height */
+			background: #d3d3d3; /* Grey background */
+			outline: none; /* Remove outline */
+			opacity: 0.7; /* Set transparency (for mouse-over effects on hover) */
+			transition: opacity .2s;
+
+			:hover {
+				opacity: 1;
+			}
+		}
+	}
+}
