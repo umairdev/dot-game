@@ -2,12 +2,14 @@
   	<div class="row">
   		<div class="column">
   			<score>
-  				<h1>Click Start, to begin the game</h1>
+  				<h1 id="score">Click Start, to begin the game</h1>
   			</score>
-  			<p>This will be replaced with the speed slider</p>
+  			<div class="slidecontainer">
+          <input type="range" min="10" max="100" value="50" step="10" class="slider" id="gameSpeed">
+        </div>
   		</div>
   		<div class="column right-middle">
-  			<button class="button">Start</button>
+  			<button id="actionButton" class="button">Start</button>
   		</div>
   	</div>
   </header>
