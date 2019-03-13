@@ -3,5 +3,31 @@
 // Base
 @import "variables";
 
+// Structure
+@import "layout";
+
 // Components
 @import "scaffolding";
+
+.container {
+	height: 100%;
+
+	header {
+		height: 100px;
+		background-color: $silver;
+		padding: 5px 15px 5px 15px;
+	}
+
+	game-container {
+		display: block;
+		text-align: center;
+		width: 100%;
+		height: calc(100vh - 150px);
+		position: relative;
+
+		canvas {
+			display: inline-block;
+			margin: 5px;
+		}
+	}
+}

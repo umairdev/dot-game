@@ -1,15 +1,23 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <meta charset="utf-8" />
-    <title>Home</title>
 
-    {{>meta}}
-</head>
-<body>
-     
-    <h2>Welcome to my homepage</h2>
+	<!-- START - Head partial placement -->
+	{{>head}}
+	<!-- END - Head partial placement -->
 
-    {{>footer}}
-</body>
+	<body>
+		<div class="container">
+			<!-- START - Header partial placement -->
+		    {{>header}}
+		    <!-- END - Header partial placement -->
+
+			<!-- START - Content partial placement -->
+			{{>content}}
+			<!-- END - Content partial placement -->    
+
+			<!-- START - Footer partial placement -->
+		    {{>footer}}
+		    <!-- END - Footer partial placement -->
+		</div>
+	</body>
 </html>
