@@ -1,23 +1,29 @@
 class Dot {
-	constructor(container) {
-		this.item = document.createElement('div');
-		this.width = container.offsetWidth;
+	constructor(parent,id) {
+		this.parent = parent;
+		this.container = this.parent.ctx;
+		this.item = document.createElement(this.parent.nodeName);
+		this.width = this.container.offsetWidth;
 		this.randomNumber;
-		this.height = container.offsetHeight;
+		this.height = this.container.offsetHeight;
 		this.position;
 		this.speed = 50;
-		this.container = container;
 		this.move;
+		this.active = true;
+		this.id = id;
+		this.pos = 0;
+
 
 		this.randomSize();
 		this.randomPosition();
 
+		this.item.setAttribute('id',this.id);
+
 		this.item.style.cssText = "height: " + this.randomNumber + "px;width: " + this.randomNumber + "px;background-color: #bbb;border-radius: 50%;display: inline-block;position: absolute; left:" + this.position + "px; top: 0;";
 		
-		this.ctx = container.appendChild(this.item);
+		this.ctx = this.container.appendChild(this.item);
 
-		this.animate(this.ctx,this.height);
-		this.score();
+		this.animate();
 	}
 
 	randomSize() {
@@ -25,44 +31,54 @@ class Dot {
 	}
 
 	randomPosition() {
-		this.position =  Math.floor(Math.random() * this.width);
-		if ((this.width - this.position) < this.randomNumber) {
-			this.position = this.position - this.randomNumber;
+		let randomColumn =  Math.floor(Math.random() * (this.parent.dotLocationColumns)),
+			randomPos = this.parent.dotLocationMap[randomColumn];
+
+		if (this.parent.collisionArray.length == this.parent.collisionLimit) {
+			this.parent.collisionArray.pop();
 		}
+
+		if (this.parent.collisionArray.includes(randomColumn)) {
+			this.randomPosition();
+		} else {
+			this.parent.collisionArray.unshift(randomColumn);
+			this.position = randomPos;
+		}
+
+		// if ((this.width - this.position) < this.randomNumber) {
+		// 	this.position = this.position - this.randomNumber;
+		// }
 	}
 
-	animate(ctx,height) {
-		let move = this.move = setInterval(frame, 50);
-		let pos = 0,
+
+
+	animate() {
+		let move,
+			self = this,
+			ctx = this.ctx,
+			height = this.height,
 			dotHeight = this.randomNumber,
 			container = this.container;
 
-		function frame() {
-			if (pos > height+dotHeight){
-				clearInterval(move);
-				container.removeChild(ctx);
-
+		move = this.move = setTimeout(function moving() {
+			if (!window.gameCanvas.paused) {
+				if (self.pos > height+dotHeight){
+					clearInterval(move);
+					self.remove();
+				} else {
+					self.pos++;
+					self.ctx.style.top = self.pos + 'px';
+					move = setTimeout(moving, 1000/self.parent.fallingSpeed);
+				}
 			} else {
-				pos++;
-				ctx.style.top = pos + 'px';
-			}
-		}
+				clearInterval(self.move);
+			} 
+		}, 100);
 	}
 
-	score() {
-		let container = this.container,
-			move = this.move,
-			ctx = this.ctx,
-			size = this.randomNumber;
-
-		ctx.addEventListener('click', clickEvent)
-
-		function clickEvent() {
-			clearInterval(move);
-			container.removeChild(ctx);
-			ctx.removeEventListener('click',clickEvent);
-			window.gameCanvas.score += Math.round(size/10);
-		}
+	remove() {
+		this.active = false;
+		this.ctx.remove();
 	}
 
 }
