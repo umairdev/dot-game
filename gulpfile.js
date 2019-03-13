@@ -90,4 +90,4 @@ gulp.task('watch', () => {
 });
 
 // Run Project Task
-gulp.task('magic', gulp.series('es6','scripts', 'sass', 'compileHtml'));
+gulp.task('magic', gulp.series('es6','scripts', 'sass', 'compileHtml', 'watch'));
