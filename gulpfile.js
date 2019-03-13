@@ -4,7 +4,7 @@ const sass = require('gulp-sass');
 const cssnano = require('gulp-cssnano');
 const sourcemaps = require('gulp-sourcemaps');
 const autoprefixer = require('gulp-autoprefixer');
-const jshint = require('gulp-jshint');
+//const jshint = require('gulp-jshint');
 const concat = require('gulp-concat');
 const uglify = require('gulp-uglify');
 const rename = require('gulp-rename');
@@ -13,6 +13,7 @@ const config = require('./gulp.config')();
 const gulpHandlebars = require('gulp-handlebars-html')(handlebars);
 const regexRename = require('gulp-regex-rename');
 const replace = require('gulp-replace');
+const babel = require('gulp-babel');
 const browserSync = require('browser-sync').create();
 
 
@@ -31,15 +32,24 @@ gulp.task('sass', () => {
 	});
 
 // Lint Task
-gulp.task('lint', () => {
+// gulp.task('lint', () => {
+//     return gulp.src('./src/js/**/*.js')
+//         .pipe(jshint())
+//         .pipe(jshint.reporter('default'));
+// 	});
+
+// ES6 -> ES5
+gulp.task('es6', () => {
     return gulp.src('./src/js/**/*.js')
-        .pipe(jshint())
-        .pipe(jshint.reporter('default'));
-	});
+        .pipe(babel ({
+            presets: ['@babel/env']
+        }))
+        .pipe(gulp.dest('./src/es5'))
+})
 
 // Concatenate & Minify JS files
 gulp.task('scripts', () => {
-    return gulp.src('./src/js/**/*.js')
+    return gulp.src('./src/es5/**/*.js')
         .pipe(concat('build.js'))
         .pipe(gulp.dest('dist'))
         .pipe(rename('build.min.js'))
@@ -67,15 +77,17 @@ gulp.task('compileHtml', () => {
 gulp.task('watch', () => {
 	
 	browserSync.init({
-        server: "./dist"
+        server: "./dist",
+        browser: "google chrome"
     });
 
-	gulp.watch('./src/js/**/*.js', gulp.series('lint'));
-	gulp.watch('./src/js/**/*.js', gulp.series('scripts'));
+	//gulp.watch('./src/js/**/*.js', gulp.series('lint'));
+    gulp.watch('./src/js/**/*.js', gulp.series('es6'));
+	gulp.watch('./src/es5/**/*.js', gulp.series('scripts'));
 	gulp.watch('./src/sass/**/*.scss', gulp.series('sass'));
 	gulp.watch(config.templates, gulp.series('compileHtml'));
-	gulp.watch("dist/*.html").on('change', browserSync.reload);
+	gulp.watch("dist/**/*.*").on('change', browserSync.reload);
 });
 
 // Run Project Task
-gulp.task('magic', gulp.series('lint', 'scripts', 'sass', 'compileHtml'));
+gulp.task('magic', gulp.series('es6','scripts', 'sass', 'compileHtml'));
