@@ -2,48 +2,57 @@ class GameCanvas {
 	constructor(container) {
 		let ctx = document.getElementsByTagName(container);
 
-		this.ctx = ctx[0];
-		this.speed = 1000, //this is the rate at which new balls show up
-		this.fallingSpeed = 100, // this is the rate at which the balls fall
-		this.score = 0,
-		this.input,
-		this.nodeName = "DOT",
-		this.dotLocationMap = {},
-		this.dotLocationColumns,
-		this.collisionArray = [],
-		this.collisionLimit = 5,
-		this.dotMax = 100,
-		this.dotMin = 10,
-		this.height = this.ctx.offsetHeight,
-		this.width = this.ctx.offsetWidth,
-		this.paused = true,
-		this.dots = {},
-		this.runGame,
-		this.buttonNode = "BUTTON",
-		this.points,
-		this.counter = 0,
-		this.scoreBoard = document.getElementById('score');
-		this.actionButton = document.getElementById('actionButton');
+		//instance properties
+		this.ctx = ctx[0], //context of this instance
+		this.height = this.ctx.offsetHeight, //instance html height
+		this.width = this.ctx.offsetWidth, //instance html weight
+
+		//configurations properties
+		this.buttonNode = "BUTTON", //specifying button node type
+		this.nodeName = "DOT", //specifying child node type
+		this.speed = 1000, //rate at which new balls show up
+		this.fallingSpeed = 100, //rate at which the balls fall
+		this.dotMax = 100, //max dot size
+		this.dotMin = 10, //min dot size
+		this.collisionLimit = 5, //number of items to main in collision array
+
+		//game engine properties
+		this.dotLocationMap = {}, //map of dot positions
+		this.dotLocationColumns, //number of columns based on dot Max
+		this.collisionArray = [], //to place new items in new locations
+		this.points, //point calculation object
+		
+		//game runTime properties
+		this.score = 0, //game score
+		this.input, //instance of input class
+		this.paused = true, //state of game
+		this.dots = {}, //list of all dots created in game
+		this.runGame, //run method which will be assigned setTimeOut
+		this.counter = 0, //counter of number of dots in game
+		this.scoreBoard, //current score of instance
+		this.startButton; //reference to game start button
 
 		this.init();
-
-		//this.scoreBoard.addEventListener('scoreUpdate', this.updateScore);
 	}
 
+	//Initialize the instance
 	init() {
-		console.log('Game Initialized');
-
 		this.input = new Input(this);
+		this.scoreBoard = document.getElementById('score');
+		this.startButton = document.getElementById('startButton');
+
 		this.pointsMapping();
 		this.spaceMapping();
 	}
 
+	//dividing the screen into columns and setting column map
 	spaceMapping() {
-		let columns = Math.round(this.width / this.dotMax),
-			spaceObj = {};
+		let columns = Math.round(this.width / this.dotMax), //splitting screen into columns to avoid collision
+			spaceObj = {}; //creating local column map
 
 		this.dotLocationColumns = columns;
 
+		//setting position based on column
 		for (let i=0;i<columns;i++){
 			spaceObj[i] = i*this.dotMax;
 		}
@@ -51,42 +60,43 @@ class GameCanvas {
 		this.dotLocationMap = spaceObj;
 	}
 
+	//starting and resuming game
 	startGame() {
 		let dots = this.dots,
-			context = this.ctx[0],
-			updateScore = this.updateScore,
-			counter = this.counter,
-			timer;
-		let self = this;
+			self = this;
 
+		//setting the paused property to false to resume/start game
+		this.paused = false;
+
+		//checking if the game was previously started or now
 		if (Object.keys(dots).length > 0) {
 			for (let item in dots){
 				dots[item].animate();
 			}
 		}
 
-		timer = this.runGame = setTimeout(function roll() {
-			if (!window.gameCanvas.paused) {
+		//based on speed creating news instances of dot class.
+		this.runGame = setTimeout(function roll() {
+			if (!self.paused) {
 			    self.dots[self.counter] = new Dot(self,self.counter);
 			    self.counter++;
-			    timer = setTimeout(roll, window.gameCanvas.speed);
+			    self.runGame = setTimeout(roll, self.speed);
 			  } else {
 			  	clearInterval(self.runGame);
 			  }
-		}, window.gameCanvas.speed);
+		}, self.speed);
 	}
 
+	//method to pause game
 	pauseGame() {
-		console.log('Game Paused');
+		//setting the paused property to true to pause game
 		this.paused = true;
+
+		//stopping the setTimeOut to loop further
 		clearInterval(this.runGame);
 	}
 
-	resumeGame() {
-		console.log('Game Resumed');
-		this.paused = false;
-	}
-
+	//method to map points
 	pointsMapping() {
 		let pointsMap = {
 			10	: 1,
@@ -104,6 +114,7 @@ class GameCanvas {
 		this.points = pointsMap;
 	}
 
+	//method to update score and remove instance of DOT when clicked, invoked from Input instance
 	updateScore(id) {
 		let dot = this.dots[id],
 			pointKey = Math.round(dot.randomNumber/10);
@@ -113,16 +124,15 @@ class GameCanvas {
 		dot.remove();
 	}
 
-
-	buttonAction() {
+	//action button invoked from Input instance on click
+	actionStartPause() {
 		if (this.paused) {
-			this.paused = false;
 			this.startGame();
-			this.actionButton.innerText = 'Pause';
+			this.startButton.innerText = 'Pause';
 		} else {
-			this.paused = true;
 			this.pauseGame();
-			this.actionButton.innerText = 'Start';
+			this.startButton.innerText = 'Start';
 		}
 	}
+
 }
