@@ -22,7 +22,9 @@ class GameCanvas {
 		this.collisionArray = [], //to place new items in new locations
 		this.points, //point calculation object
 		this.imageId = "baloon", //svg image container id for dots
+		this.bonusId = "bonus", //svg image container id for bonus score
 		this.imageSvg, //template svg
+		this.bonusSvg, //bonus dot image svg
 		this.colorPalette, //colors for svg
 		
 		//game runTime properties
@@ -124,7 +126,12 @@ class GameCanvas {
 		let dot = this.dots[id],
 			pointKey = Math.round(dot.randomNumber/10);
 
-		this.score += this.points[pointKey];
+		if (dot.randomNumber == 150) {
+			this.score += 50;
+		} else {
+			this.score += this.points[pointKey];
+		}
+
 		this.scoreBoard.innerText = this.score;
 		dot.remove();
 	}
@@ -142,6 +149,7 @@ class GameCanvas {
 
 	readSvg() {
 		this.imageSvg = document.getElementById(this.imageId).childNodes[1];
+		this.bonusSvg = document.getElementById(this.bonusId).childNodes[1];
 	}
 
 	colorSettings() {
@@ -155,6 +163,10 @@ class GameCanvas {
 			7: "#bf00ff",
 			8: "#ff00bf"
 		}
+	}
+
+	removeDot(id) {
+		delete this.dots[id];
 	}
 
 }
