@@ -28,7 +28,7 @@ class Input {
 		}
 
 		if (e.target.nodeName == this.parent.buttonNode) {
-			this.parent.buttonAction();
+			this.parent.actionStartPause();
 		}
 	}
 }

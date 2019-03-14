@@ -15,6 +15,7 @@ const regexRename = require('gulp-regex-rename');
 const replace = require('gulp-replace');
 const babel = require('gulp-babel');
 const browserSync = require('browser-sync').create();
+const clean = require('gulp-clean');
 
 
 // Sass and Styling Task
@@ -54,8 +55,14 @@ gulp.task('scripts', () => {
         .pipe(gulp.dest('dist'))
         .pipe(rename('build.min.js'))
         .pipe(uglify())
-        .pipe(gulp.dest('dist/js'));
+        .pipe(gulp.dest('dist/js'))
 	});
+
+// Delete temp files
+gulp.task('cleanup', () => {
+    return gulp.src('./src/es5')
+        .pipe(clean({force: true}))
+    });
 
 // Templating task
 gulp.task('compileHtml', () => {
@@ -83,11 +90,11 @@ gulp.task('watch', () => {
 
 	//gulp.watch('./src/js/**/*.js', gulp.series('lint'));
     gulp.watch('./src/js/**/*.js', gulp.series('es6'));
-	gulp.watch('./src/es5/**/*.js', gulp.series('scripts'));
+	gulp.watch('./src/es5/**/*.js', gulp.series('scripts','cleanup'));
 	gulp.watch('./src/sass/**/*.scss', gulp.series('sass'));
 	gulp.watch(config.templates, gulp.series('compileHtml'));
 	gulp.watch("dist/**/*.*").on('change', browserSync.reload);
 });
 
 // Run Project Task
-gulp.task('magic', gulp.series('es6','scripts', 'sass', 'compileHtml', 'watch'));
+gulp.task('magic', gulp.series('es6','scripts','cleanup','sass', 'compileHtml', 'watch'));
