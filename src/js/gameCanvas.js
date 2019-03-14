@@ -21,6 +21,9 @@ class GameCanvas {
 		this.dotLocationColumns, //number of columns based on dot Max
 		this.collisionArray = [], //to place new items in new locations
 		this.points, //point calculation object
+		this.imageId = "baloon", //svg image container id for dots
+		this.imageSvg, //template svg
+		this.colorPalette, //colors for svg
 		
 		//game runTime properties
 		this.score = 0, //game score
@@ -40,9 +43,11 @@ class GameCanvas {
 		this.input = new Input(this);
 		this.scoreBoard = document.getElementById('score');
 		this.startButton = document.getElementById('startButton');
-
+		
+		this.readSvg();
 		this.pointsMapping();
 		this.spaceMapping();
+		this.colorSettings();
 	}
 
 	//dividing the screen into columns and setting column map
@@ -132,6 +137,23 @@ class GameCanvas {
 		} else {
 			this.pauseGame();
 			this.startButton.innerText = 'Start';
+		}
+	}
+
+	readSvg() {
+		this.imageSvg = document.getElementById(this.imageId).childNodes[1];
+	}
+
+	colorSettings() {
+		this.colorPalette = {
+			1: "#ff0000",
+			2: "#ff8000",
+			3: "#ffff00",
+			4: "#00ff00",
+			5: "#00bfff",
+			6: "#4000ff",
+			7: "#bf00ff",
+			8: "#ff00bf"
 		}
 	}
 

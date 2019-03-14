@@ -21,14 +21,16 @@ class Input {
 	}
 
 	clickEvent(e) {
-		if (e.target.nodeName == this.parent.nodeName){
-			if(!this.parent.paused) {
-				this.parent.updateScore(e.target.id);
-			}
-		}
-
 		if (e.target.nodeName == this.parent.buttonNode) {
 			this.parent.actionStartPause();
+		}
+
+		let node = e.target.parentNode.parentNode;
+
+		if (node.nodeName == this.parent.nodeName){
+			if(!this.parent.paused) {
+				this.parent.updateScore(node.id);
+			}
 		}
 	}
 }

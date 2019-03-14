@@ -14,7 +14,7 @@
 
 	header {
 		height: 100px;
-		background-color: $silver;
+		background-color: $header-color;
 		padding: 5px 15px 5px 15px;
 	}
 
@@ -22,8 +22,11 @@
 		display: block;
 		text-align: center;
 		width: 100%;
-		height: calc(100vh - 150px);
+		height: calc(100vh - 110px);
 		position: relative;
+		background-image: url(../assets/svg/background.svg);
+    	background-size: cover;
+    	background-repeat: no-repeat;
 
 		canvas {
 			display: inline-block;
@@ -33,12 +36,13 @@
 
 	.slidecontainer {
 	 	width: 100%;
+	 	padding-top: 8px;
 
 	 	.slider {
 			appearance: none;
 			width: 100%; /* Full-width */
 			height: 25px; /* Specified height */
-			background: #d3d3d3; /* Grey background */
+			background: $slider-background;
 			outline: none; /* Remove outline */
 			opacity: 0.7; /* Set transparency (for mouse-over effects on hover) */
 			transition: opacity .2s;
@@ -48,4 +52,8 @@
 			}
 		}
 	}
+}
+
+#baloon {
+	display: none;
 }

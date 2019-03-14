@@ -12,8 +12,10 @@ class Dot {
 		this.active = true, //state of item
 		this.id = id, //id of item from parent
 		this.pos = 0, //current position of item
-		this.ctx; //current context of item
-
+		this.ctx, //current context of item
+		this.color, //set random color from pallete
+		this.colorNumber, //random color number
+		this.svg; //svg content
 
 		this.init();
 	}
@@ -23,14 +25,22 @@ class Dot {
 		//initialize numbers first
 		this.randomSize();
 		this.randomPosition();
+		this.randomColor();
+
+		//cloning svg node for each Instance
+		this.svg = this.parent.imageSvg.cloneNode(true);
+
+		//specifying color for this instance
+		this.svg.childNodes[1].setAttribute('fill',this.color);
 
 		//create html element
 		this.item = document.createElement(this.nodeName);
 		this.item.setAttribute('id',this.id);
 		this.item.style.cssText = "height: " + this.randomNumber + 
 			"px;width: " + this.randomNumber + 
-			"px;background-color: #bbb;border-radius: 50%;display: inline-block;position: absolute; left:" + 
-			this.position + "px; top: 0;";
+			"px;border-radius: 50%;display: inline-block;position: absolute; left:" + 
+			this.position + "px; bottom: 0;";
+		this.item.appendChild(this.svg);
 		this.ctx = this.container.appendChild(this.item);
 
 		//animate the element
@@ -67,18 +77,26 @@ class Dot {
 
 		this.move = setTimeout(function moving() {
 			if (!self.parent.paused) {
-				if (self.pos > height+dotHeight){
+				if (self.pos+dotHeight > height){
 					clearInterval(self.move);
 					self.remove();
 				} else {
 					self.pos++;
-					self.ctx.style.top = self.pos + 'px';
+					self.ctx.style.bottom = self.pos + 'px';
 					self.move = setTimeout(moving, 1000/self.parent.fallingSpeed);
 				}
 			} else {
 				clearInterval(self.move);
 			} 
-		}, 100);
+		}, 1000/self.parent.fallingSpeed);
+	}
+
+	randomColor() {
+		let num = Math.floor(Math.random() * Object.keys(this.parent.colorPalette).length) + 1;
+
+		this.colorNumber = num;
+
+		this.color = this.parent.colorPalette[num];
 	}
 
 	//remove current instance from DOM and available for GC
