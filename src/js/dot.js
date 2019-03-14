@@ -15,7 +15,10 @@ class Dot {
 		this.ctx, //current context of item
 		this.color, //set random color from pallete
 		this.colorNumber, //random color number
-		this.svg; //svg content
+		this.svg, //svg content
+		this.bonusSvg, //bonus svg content
+		this.randomBonusNumber, //generated random number for bonus
+		this.isBonus = false; //bonus item flag
 
 		this.init();
 	}
@@ -26,22 +29,38 @@ class Dot {
 		this.randomSize();
 		this.randomPosition();
 		this.randomColor();
+		this.randomBonus();
 
-		//cloning svg node for each Instance
-		this.svg = this.parent.imageSvg.cloneNode(true);
+		//check if bonus
+		if (this.randomBonusNumber == 17) { //any arbitrary number - probability 1 in 20
+			this.svg = this.parent.bonusSvg.cloneNode(true);
+			this.item = document.createElement(this.nodeName);
+			this.item.setAttribute('id',this.id);
+			this.randomNumber = 150; //bonus item should be big so override randomNumber
+			this.isBonus = true;
 
-		//specifying color for this instance
-		this.svg.childNodes[1].setAttribute('fill',this.color);
-
-		//create html element
-		this.item = document.createElement(this.nodeName);
-		this.item.setAttribute('id',this.id);
-		this.item.style.cssText = "height: " + this.randomNumber + 
+			this.item.style.cssText = "height: " + this.randomNumber + 
 			"px;width: " + this.randomNumber + 
 			"px;border-radius: 50%;display: inline-block;position: absolute; left:" + 
 			this.position + "px; bottom: 0;";
-		this.item.appendChild(this.svg);
-		this.ctx = this.container.appendChild(this.item);
+		} else {
+			//cloning svg node for each Instance
+			this.svg = this.parent.imageSvg.cloneNode(true);
+
+			//specifying color for this instance
+			this.svg.childNodes[1].setAttribute('fill',this.color);
+
+			//create html element
+			this.item = document.createElement(this.nodeName);
+			this.item.setAttribute('id',this.id);
+			this.item.style.cssText = "height: " + this.randomNumber + 
+				"px;width: " + this.randomNumber + 
+				"px;border-radius: 50%;display: inline-block;position: absolute; left:" + 
+				this.position + "px; bottom: 0;";
+		}
+
+		this.item.appendChild(this.svg); //appending svg to node
+		this.ctx = this.container.appendChild(this.item); //appending dot(node) to container
 
 		//animate the element
 		this.animate();
@@ -73,7 +92,14 @@ class Dot {
 	animate() {
 		let self = this,
 			height = this.height,
-			dotHeight = this.randomNumber;
+			dotHeight = this.randomNumber,
+			speed;
+
+		if (this.isBonus) {
+			speed = 250;
+		} else {
+			speed = this.parent.fallingSpeed;
+		}
 
 		this.move = setTimeout(function moving() {
 			if (!self.parent.paused) {
@@ -83,14 +109,15 @@ class Dot {
 				} else {
 					self.pos++;
 					self.ctx.style.bottom = self.pos + 'px';
-					self.move = setTimeout(moving, 1000/self.parent.fallingSpeed);
+					self.move = setTimeout(moving, 1000/speed);
 				}
 			} else {
 				clearInterval(self.move);
 			} 
-		}, 1000/self.parent.fallingSpeed);
+		}, 1000/speed);
 	}
 
+	//random color for balloons
 	randomColor() {
 		let num = Math.floor(Math.random() * Object.keys(this.parent.colorPalette).length) + 1;
 
@@ -99,10 +126,18 @@ class Dot {
 		this.color = this.parent.colorPalette[num];
 	}
 
+	//generate random number for bonus item
+	randomBonus() {
+		let num = Math.floor(Math.random() * 20) + 1;
+
+		this.randomBonusNumber = num;
+	}
+
 	//remove current instance from DOM and available for GC
 	remove() {
 		this.active = false;
 		this.ctx.remove();
+		this.parent.removeDot(this.id);
 	}
 
 }
