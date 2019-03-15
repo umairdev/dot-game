@@ -3,6 +3,7 @@ module.exports = function () {
     const assetRoot = root + 'src/';
     const handlebarsRoot = assetRoot + 'templates/';
     const distRoot = root + 'dist/';
+    const imgRoot = root + 'assets/**/*.*';
 
     let config = {
         templatePath: handlebarsRoot,
@@ -10,7 +11,8 @@ module.exports = function () {
         templateOutputPath: distRoot,
         templates: [
             handlebarsRoot + '**/*.hbs'
-        ]
+        ],
+        assetPath: imgRoot
     };
 
     return config;

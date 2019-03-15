@@ -13,6 +13,8 @@ html, body {
 
 body {
 	background: $background-color;
+  margin: 0;
+  overflow: hidden;
 }
 
 h1 {
@@ -20,6 +22,7 @@ h1 {
 	font-size: 2em;
 	font-weight: bold;
 	margin: 0;
+  color: $h1-color;
 }
 
 p {

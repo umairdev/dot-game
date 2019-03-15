@@ -14,15 +14,23 @@ $light-gray: #ccc;
 $dark-gray: #484848;
 $silver: #C0C0C0;
 $blue: #008CBA;
+$orange: #FFA500;
+$orange-red: #8B0000;
+$lime-green: #AEEA5E;
+$light-blue: #2196f3;
 
 // Theme Colors
 $border-color: $dark-gray;
 $background-color: $white;
-$header-color: $silver;
+$header-color: $lime-green;
+$slider-background: $light-blue;
+
+// Text-color
+$h1-color: $orange-red;
 
 // Button
-$button-color: $blue;
+$button-color: $light-blue;
 $button-color-text: $white;
 $button-hover-color: $white;
-$button-hover-color-text: $blue;
-$button-border-color: $blue;
+$button-hover-color-text: $light-blue;
+$button-border-color: $light-blue;

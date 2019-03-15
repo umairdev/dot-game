@@ -64,6 +64,12 @@ gulp.task('cleanup', () => {
         .pipe(clean({force: true}))
     });
 
+// Move Image files
+gulp.task('move', () => {
+    return gulp.src(config.assetPath)
+        .pipe(gulp.dest('dist/assets/svg'));
+});
+
 // Templating task
 gulp.task('compileHtml', () => {
     var templateData = {
@@ -84,6 +90,7 @@ gulp.task('compileHtml', () => {
 gulp.task('watch', () => {
 	
 	browserSync.init({
+        files: ["**/**/*.*"],
         server: "./dist",
         browser: "google chrome"
     });
@@ -93,8 +100,9 @@ gulp.task('watch', () => {
 	gulp.watch('./src/es5/**/*.js', gulp.series('scripts','cleanup'));
 	gulp.watch('./src/sass/**/*.scss', gulp.series('sass'));
 	gulp.watch(config.templates, gulp.series('compileHtml'));
+    gulp.watch(config.assetPath, gulp.series('move'));
 	gulp.watch("dist/**/*.*").on('change', browserSync.reload);
 });
 
 // Run Project Task
-gulp.task('magic', gulp.series('es6','scripts','cleanup','sass', 'compileHtml', 'watch'));
+gulp.task('magic', gulp.series('es6','scripts','cleanup','sass','compileHtml','move','watch'));

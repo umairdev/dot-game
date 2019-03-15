@@ -21,6 +21,11 @@ class GameCanvas {
 		this.dotLocationColumns, //number of columns based on dot Max
 		this.collisionArray = [], //to place new items in new locations
 		this.points, //point calculation object
+		this.imageId = "baloon", //svg image container id for dots
+		this.bonusId = "bonus", //svg image container id for bonus score
+		this.imageSvg, //template svg
+		this.bonusSvg, //bonus dot image svg
+		this.colorPalette, //colors for svg
 		
 		//game runTime properties
 		this.score = 0, //game score
@@ -40,9 +45,11 @@ class GameCanvas {
 		this.input = new Input(this);
 		this.scoreBoard = document.getElementById('score');
 		this.startButton = document.getElementById('startButton');
-
+		
+		this.readSvg();
 		this.pointsMapping();
 		this.spaceMapping();
+		this.colorSettings();
 	}
 
 	//dividing the screen into columns and setting column map
@@ -119,7 +126,12 @@ class GameCanvas {
 		let dot = this.dots[id],
 			pointKey = Math.round(dot.randomNumber/10);
 
-		this.score += this.points[pointKey];
+		if (dot.randomNumber == 150) {
+			this.score += 50;
+		} else {
+			this.score += this.points[pointKey];
+		}
+
 		this.scoreBoard.innerText = this.score;
 		dot.remove();
 	}
@@ -133,6 +145,28 @@ class GameCanvas {
 			this.pauseGame();
 			this.startButton.innerText = 'Start';
 		}
+	}
+
+	readSvg() {
+		this.imageSvg = document.getElementById(this.imageId).childNodes[1];
+		this.bonusSvg = document.getElementById(this.bonusId).childNodes[1];
+	}
+
+	colorSettings() {
+		this.colorPalette = {
+			1: "#ff0000",
+			2: "#ff8000",
+			3: "#ffff00",
+			4: "#00ff00",
+			5: "#00bfff",
+			6: "#4000ff",
+			7: "#bf00ff",
+			8: "#ff00bf"
+		}
+	}
+
+	removeDot(id) {
+		delete this.dots[id];
 	}
 
 }
