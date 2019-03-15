@@ -92,29 +92,39 @@ class Dot {
 	animate() {
 		let self = this,
 			height = this.height,
-			dotHeight = this.randomNumber,
-			speed;
+			dotHeight = this.randomNumber;
 
 		if (this.isBonus) {
-			speed = 250;
-		} else {
-			speed = this.parent.fallingSpeed;
-		}
-
-		this.move = setTimeout(function moving() {
-			if (!self.parent.paused) {
-				if (self.pos+dotHeight > height){
-					clearInterval(self.move);
-					self.remove();
+			this.move = setTimeout(function moving() {
+				if (!self.parent.paused) {
+					if (self.pos+dotHeight > height){
+						clearInterval(self.move);
+						self.remove();
+					} else {
+						self.pos++;
+						self.ctx.style.bottom = self.pos + 'px';
+						self.move = setTimeout(moving, 1000/250);
+					}
 				} else {
-					self.pos++;
-					self.ctx.style.bottom = self.pos + 'px';
-					self.move = setTimeout(moving, 1000/speed);
-				}
-			} else {
-				clearInterval(self.move);
-			} 
-		}, 1000/speed);
+					clearInterval(self.move);
+				} 
+			}, 1000/250);
+		} else {
+			this.move = setTimeout(function moving() {
+				if (!self.parent.paused) {
+					if (self.pos+dotHeight > height){
+						clearInterval(self.move);
+						self.remove();
+					} else {
+						self.pos++;
+						self.ctx.style.bottom = self.pos + 'px';
+						self.move = setTimeout(moving, 1000/self.parent.fallingSpeed);
+					}
+				} else {
+					clearInterval(self.move);
+				} 
+			}, 1000/self.parent.fallingSpeed);
+		}
 	}
 
 	//random color for balloons
